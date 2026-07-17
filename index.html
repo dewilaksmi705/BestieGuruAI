@@ -157,6 +157,18 @@
                         <input type="text" id="nama_penyusun" required class="w-full glass-input px-4 py-2.5 rounded-xl" placeholder="Contoh: Budi Santoso, S.Pd">
                     </div>
                     <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-2">NIP Penyusun / Guru <span class="text-red-500">*</span></label>
+                        <input type="text" id="nip_guru" required class="w-full glass-input px-4 py-2.5 rounded-xl" placeholder="Contoh: 19800101 200501 1 001">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-2">Nama Kepala Sekolah <span class="text-red-500">*</span></label>
+                        <input type="text" id="nama_kepsek" required class="w-full glass-input px-4 py-2.5 rounded-xl" placeholder="Contoh: Dr. Supriyadi, M.Pd">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-2">NIP Kepala Sekolah <span class="text-red-500">*</span></label>
+                        <input type="text" id="nip_kepsek" required class="w-full glass-input px-4 py-2.5 rounded-xl" placeholder="Contoh: 19700101 199501 1 001">
+                    </div>
+                    <div>
                         <label class="block text-sm font-medium text-slate-700 mb-2">Nama Sekolah <span class="text-red-500">*</span></label>
                         <input type="text" id="nama_sekolah" required class="w-full glass-input px-4 py-2.5 rounded-xl" placeholder="Contoh: SD Negeri 1 Nusantara">
                     </div>
@@ -221,6 +233,68 @@
                     <div>
                         <label class="block text-sm font-medium text-slate-700 mb-2">Alokasi Waktu <span class="text-red-500">*</span></label>
                         <input type="text" id="alokasi_waktu" required class="w-full glass-input px-4 py-2.5 rounded-xl" placeholder="Contoh: 2 x 35 Menit">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-2">Target Peserta Didik <span class="text-red-500">*</span></label>
+                        <select id="target_peserta" required class="w-full glass-input px-4 py-2.5 rounded-xl appearance-none">
+                            <option value="">-- Pilih Target --</option>
+                            <option value="Reguler">Reguler</option>
+                            <option value="Kesulitan Belajar">Kesulitan Belajar</option>
+                            <option value="Pencapaian Tinggi">Pencapaian Tinggi</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-2">Model Pembelajaran <span class="text-red-500">*</span></label>
+                        <select id="model_pembelajaran" required class="w-full glass-input px-4 py-2.5 rounded-xl appearance-none">
+                            <option value="">-- Pilih Model --</option>
+                            <option value="PjBL">PjBL (Project Based Learning)</option>
+                            <option value="PBL">PBL (Problem Based Learning)</option>
+                            <option value="Inquiry">Inquiry</option>
+                            <option value="Kooperatif">Kooperatif</option>
+                            <option value="CTL">CTL (Contextual Teaching)</option>
+                            <option value="Game Based Learning">Game Based Learning</option>
+                            <option value="Model 5E">Model 5E</option>
+                        </select>
+                    </div>
+                    <div class="md:col-span-2">
+                        <label class="block text-sm font-medium text-slate-700 mb-2">Metode Pembelajaran <span class="text-red-500">*</span></label>
+                        <select id="metode_pembelajaran" required class="w-full glass-input px-4 py-2.5 rounded-xl appearance-none">
+                            <option value="">-- Pilih Metode --</option>
+                            <option value="Ceramah, Diskusi, Tanya Jawab">Ceramah, Diskusi, Tanya Jawab</option>
+                            <option value="Eksperimen, Demonstrasi, Discovery">Eksperimen, Demonstrasi, Discovery</option>
+                            <option value="Studi Kasus, Role Play, Mind Mapping">Studi Kasus, Role Play, Mind Mapping</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Dimensi Profil Lulusan & Sarpras (Checkboxes) -->
+                <div class="bg-white/50 p-4 rounded-xl border border-slate-200 space-y-4">
+                    <div>
+                        <label class="block text-sm font-semibold text-slate-700 mb-3">Dimensi Profil Lulusan <span class="text-red-500">*</span> <span class="font-normal text-slate-500 text-xs">(Pilih minimal satu)</span></label>
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+                            <label class="flex items-center gap-2 text-sm cursor-pointer hover:bg-white p-1 rounded-md"><input type="checkbox" name="profil_lulusan_cb" value="Keimanan & Ketakwaan" class="w-4 h-4 text-brand-600 rounded"> Keimanan & Ketakwaan</label>
+                            <label class="flex items-center gap-2 text-sm cursor-pointer hover:bg-white p-1 rounded-md"><input type="checkbox" name="profil_lulusan_cb" value="Kewargaan" class="w-4 h-4 text-brand-600 rounded"> Kewargaan</label>
+                            <label class="flex items-center gap-2 text-sm cursor-pointer hover:bg-white p-1 rounded-md"><input type="checkbox" name="profil_lulusan_cb" value="Penalaran Kritis" class="w-4 h-4 text-brand-600 rounded"> Penalaran Kritis</label>
+                            <label class="flex items-center gap-2 text-sm cursor-pointer hover:bg-white p-1 rounded-md"><input type="checkbox" name="profil_lulusan_cb" value="Kreativitas" class="w-4 h-4 text-brand-600 rounded"> Kreativitas</label>
+                            <label class="flex items-center gap-2 text-sm cursor-pointer hover:bg-white p-1 rounded-md"><input type="checkbox" name="profil_lulusan_cb" value="Kolaborasi" class="w-4 h-4 text-brand-600 rounded"> Kolaborasi</label>
+                            <label class="flex items-center gap-2 text-sm cursor-pointer hover:bg-white p-1 rounded-md"><input type="checkbox" name="profil_lulusan_cb" value="Kemandirian" class="w-4 h-4 text-brand-600 rounded"> Kemandirian</label>
+                            <label class="flex items-center gap-2 text-sm cursor-pointer hover:bg-white p-1 rounded-md"><input type="checkbox" name="profil_lulusan_cb" value="Kesehatan" class="w-4 h-4 text-brand-600 rounded"> Kesehatan</label>
+                            <label class="flex items-center gap-2 text-sm cursor-pointer hover:bg-white p-1 rounded-md"><input type="checkbox" name="profil_lulusan_cb" value="Komunikasi" class="w-4 h-4 text-brand-600 rounded"> Komunikasi</label>
+                        </div>
+                    </div>
+                    <hr class="border-slate-200">
+                    <div>
+                        <label class="block text-sm font-semibold text-slate-700 mb-3">Sarana Prasarana <span class="text-red-500">*</span> <span class="font-normal text-slate-500 text-xs">(Pilih minimal satu)</span></label>
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+                            <label class="flex items-center gap-2 text-sm cursor-pointer hover:bg-white p-1 rounded-md"><input type="checkbox" name="sarpras_cb" value="LCD" class="w-4 h-4 text-brand-600 rounded"> LCD</label>
+                            <label class="flex items-center gap-2 text-sm cursor-pointer hover:bg-white p-1 rounded-md"><input type="checkbox" name="sarpras_cb" value="Laptop" class="w-4 h-4 text-brand-600 rounded"> Laptop</label>
+                            <label class="flex items-center gap-2 text-sm cursor-pointer hover:bg-white p-1 rounded-md"><input type="checkbox" name="sarpras_cb" value="Chromebook" class="w-4 h-4 text-brand-600 rounded"> Chromebook</label>
+                            <label class="flex items-center gap-2 text-sm cursor-pointer hover:bg-white p-1 rounded-md"><input type="checkbox" name="sarpras_cb" value="Gawai" class="w-4 h-4 text-brand-600 rounded"> Gawai</label>
+                            <label class="flex items-center gap-2 text-sm cursor-pointer hover:bg-white p-1 rounded-md"><input type="checkbox" name="sarpras_cb" value="Youtube" class="w-4 h-4 text-brand-600 rounded"> Youtube</label>
+                            <label class="flex items-center gap-2 text-sm cursor-pointer hover:bg-white p-1 rounded-md"><input type="checkbox" name="sarpras_cb" value="LKPD" class="w-4 h-4 text-brand-600 rounded"> LKPD</label>
+                            <label class="flex items-center gap-2 text-sm cursor-pointer hover:bg-white p-1 rounded-md"><input type="checkbox" name="sarpras_cb" value="Whiteboard" class="w-4 h-4 text-brand-600 rounded"> Whiteboard</label>
+                            <label class="flex items-center gap-2 text-sm cursor-pointer hover:bg-white p-1 rounded-md"><input type="checkbox" name="sarpras_cb" value="Interactive Flat Panel" class="w-4 h-4 text-brand-600 rounded"> Interactive Flat Panel</label>
+                        </div>
                     </div>
                 </div>
 
@@ -430,8 +504,8 @@
                 const output = document.getElementById('output_container');
                 const exportControls = document.getElementById('export_controls');
                 
-                // Clean markdown artifacts if AI wrapped html in ```html
-                let cleanedHtml = htmlContent.replace(/```html\s*/gi, '').replace(/```\s*$/g, '');
+                // Clean markdown artifacts lebih agresif jika AI membungkus dengan ```html berkali-kali
+                let cleanedHtml = htmlContent.replace(/```html/gi, '').replace(/```/g, '');
                 
                 output.innerHTML = cleanedHtml;
                 exportControls.classList.remove('hidden');
@@ -612,6 +686,19 @@
                     return false;
                 }
                 
+                // Validasi Profil Lulusan & Sarpras
+                const checkedProfil = document.querySelectorAll('input[name="profil_lulusan_cb"]:checked');
+                if(checkedProfil.length === 0) {
+                    AppUI.showToast('Pilih minimal satu Dimensi Profil Lulusan', 'error');
+                    return false;
+                }
+
+                const checkedSarpras = document.querySelectorAll('input[name="sarpras_cb"]:checked');
+                if(checkedSarpras.length === 0) {
+                    AppUI.showToast('Pilih minimal satu Sarana Prasarana', 'error');
+                    return false;
+                }
+
                 const jenjang = document.getElementById('jenjang').value;
                 const mapel = document.getElementById('dropdown_mapel').value;
                 
@@ -644,6 +731,9 @@
             collectData() {
                 const data = {
                     penyusun: document.getElementById('nama_penyusun').value,
+                    nip_guru: document.getElementById('nip_guru').value,
+                    nama_kepsek: document.getElementById('nama_kepsek').value,
+                    nip_kepsek: document.getElementById('nip_kepsek').value,
                     sekolah: document.getElementById('nama_sekolah').value,
                     jenjang: document.getElementById('jenjang').value,
                     kelas: document.getElementById('kelas').value,
@@ -652,7 +742,16 @@
                     tanggal: document.getElementById('tanggal_pelaksanaan').value,
                     waktu: document.getElementById('alokasi_waktu').value,
                     mapel: document.getElementById('dropdown_mapel').value,
+                    target_peserta: document.getElementById('target_peserta').value,
+                    model_pembelajaran: document.getElementById('model_pembelajaran').value,
+                    metode_pembelajaran: document.getElementById('metode_pembelajaran').value,
                 };
+
+                const checkedProfil = Array.from(document.querySelectorAll('input[name="profil_lulusan_cb"]:checked')).map(cb => cb.value);
+                data.profil_lulusan = checkedProfil.join(', ');
+
+                const checkedSarpras = Array.from(document.querySelectorAll('input[name="sarpras_cb"]:checked')).map(cb => cb.value);
+                data.sarpras = checkedSarpras.join(', ');
 
                 if (data.mapel === 'Manual' || data.jenjang !== 'SD') {
                     data.mapelName = document.getElementById('mapel_manual').value;
@@ -900,35 +999,46 @@
         const Generators = {
             RPM: (data) => {
                 return `Bertindaklah sebagai Guru Ahli dan Pengembang Kurikulum Pendidikan Nasional Indonesia.
-Buatkan Rencana Pelaksanaan Pembelajaran (RPM) / Modul Ajar Singkat yang sangat rapi dan profesional.
+Buatkan Rencana Pelaksanaan Pembelajaran (RPM) / Modul Ajar Lengkap yang sangat rapi dan profesional.
 
-Data Pembelajaran:
-- Penyusun: ${data.penyusun}
+Data Identitas & Pembelajaran:
+- Penyusun: ${data.penyusun} (NIP: ${data.nip_guru})
+- Kepala Sekolah: ${data.nama_kepsek} (NIP: ${data.nip_kepsek})
 - Sekolah: ${data.sekolah}
-- Jenjang: ${data.jenjang}
-- Kelas: ${data.kelas}
-- Semester: ${data.semester}
-- Tahun Pelajaran: ${data.tahun}
+- Jenjang: ${data.jenjang} (${data.kelas})
+- Semester/Tahun: ${data.semester} - ${data.tahun}
 - Mata Pelajaran: ${data.mapelName}
-- Tanggal Pelaksanaan: ${data.tanggal}
-- Alokasi Waktu: ${data.waktu}
+- Tanggal & Waktu: ${data.tanggal} (${data.waktu})
 - Elemen: ${data.elemen}
 - Capaian Pembelajaran (CP): ${data.cp}
 - Tujuan Pembelajaran (TP): ${data.tp}
 
-INSTRUKSI OUTPUT:
-1. HASILKAN HANYA KODE HTML. Jangan ada teks markdown di luar tag HTML.
-2. Gunakan tag <table> untuk menyusun RPM agar sangat rapi ketika di-export ke Word.
-3. Struktur RPM meliputi:
-   - Identitas Modul
-   - Kompetensi Awal
-   - Profil Pelajar Pancasila yang relevan
-   - Sarana dan Prasarana
-   - Target Peserta Didik
-   - Kegiatan Pembelajaran (Pendahuluan, Inti, Penutup) dengan tabel terstruktur beserta estimasi waktu
-   - Asesmen (Sikap, Pengetahuan, Keterampilan)
-4. Gunakan styling inline CSS yang profesional, font sans-serif, border tabel 1px solid #000, padding, dan warna header tabel abu-abu muda.
-5. Buat sangat detail dan relevan dengan Tujuan Pembelajaran (TP) yang diberikan.`;
+Data Metode & Fasilitas:
+- Target Peserta Didik: ${data.target_peserta}
+- Model Pembelajaran: ${data.model_pembelajaran}
+- Metode Pembelajaran: ${data.metode_pembelajaran}
+- Profil Lulusan: ${data.profil_lulusan}
+- Sarana dan Prasarana: ${data.sarpras}
+
+TUGAS KHUSUS (WAJIB GENERATE OTOMATIS BERDASARKAN DATA DI ATAS):
+1. Analisis Peserta Didik: Uraikan secara logis pengetahuan awal, minat, latar belakang, dan kebutuhan belajar mereka.
+2. Materi Pelajaran: Uraikan materi ke dalam 4 dimensi (Faktual, Konseptual, Prosedural, Metakognitif).
+3. Dimensi Profil Lulusan: Berikan deskripsi penerapan yang relevan untuk poin berikut: ${data.profil_lulusan}.
+4. Lintas Disiplin Ilmu: Tuliskan secara otomatis ilmu disiplin lain yang saling terkait.
+5. Topik Pembelajaran: Turunkan otomatis dari TP dan CP menjadi topik yang relevan dan praktis.
+6. Praktik Pedagogis: Susun metode praktik per pertemuan berdasarkan Model ${data.model_pembelajaran} (Misal: Inkuiri, PjBL, PBL, Game Based, atau Station Learning).
+7. Kemitraan Pembelajaran: Uraikan potensi kemitraan dari luar kelas/sekolah.
+8. Lingkungan Pembelajaran: Deskripsikan pengelolaan fisik, virtual, dan budaya yang diperlukan.
+9. Pemanfaatan Digital: Rekomendasikan tools/media online spesifik yang relevan dengan fasilitas sarpras ini: ${data.sarpras}.
+
+INSTRUKSI OUTPUT (SANGAT PENTING):
+1. HASILKAN HANYA KODE HTML MURNI (tanpa tag markdown).
+2. TULISKAN KODE SAMPAI SELESAI, JANGAN TERPOTONG. Pastikan seluruh tag <table> tertutup dan struktur HTML valid sampai baris terakhir.
+3. JANGAN PERNAH MENGGUNAKAN ISTILAH "Profil Pelajar Pancasila", ganti semua dengan istilah "Dimensi Profil Lulusan".
+4. Gunakan tag <table> untuk menyusun keseluruhan isi RPP/Modul agar sangat rapi ketika di-export ke Microsoft Word.
+5. Struktur harus memuat semua 9 Poin Tugas Khusus di atas beserta pendahuluan, inti, dan penutup pembelajaran.
+6. Di akhir halaman, buatkan format Lembar Pengesahan tanda tangan yang rapi untuk Kepala Sekolah (${data.nama_kepsek} / NIP: ${data.nip_kepsek}) di sebelah kiri dan Guru Penyusun (${data.penyusun} / NIP: ${data.nip_guru}) di sebelah kanan.
+7. Gunakan styling inline CSS yang profesional, font sans-serif, border tabel 1px solid #000, padding, dan warna header tabel abu-abu muda.`;
             },
             
             LKPD: (data) => {
@@ -936,25 +1046,28 @@ INSTRUKSI OUTPUT:
 Buatkan Lembar Kerja Peserta Didik (LKPD) yang menarik, interaktif, dan berbasis aktivitas (HOTS).
 
 Data Pembelajaran:
+- Penyusun: ${data.penyusun}
 - Sekolah: ${data.sekolah}
-- Jenjang: ${data.jenjang}
-- Kelas: ${data.kelas}
+- Jenjang: ${data.jenjang} (${data.kelas})
 - Mata Pelajaran: ${data.mapelName}
 - Tujuan Pembelajaran (TP): ${data.tp}
+- Topik / Model: Dirancang khusus menggunakan Model ${data.model_pembelajaran} dengan Metode ${data.metode_pembelajaran}
 
-INSTRUKSI OUTPUT:
-1. HASILKAN HANYA KODE HTML. Jangan gunakan markdown.
-2. Desain layaknya kertas A4 Portrait.
-3. GUNAKAN INLINE CSS dengan konsep Glassmorphism ringan, efek 3D (box-shadow berlapis, elemen timbul), dan warna yang sesuai jenjang ${data.jenjang}.
-4. Gunakan Emoji Edukatif yang relevan untuk menarik perhatian siswa.
-5. Struktur LKPD meliputi:
+INSTRUKSI OUTPUT (SANGAT PENTING):
+1. HASILKAN HANYA KODE HTML MURNI (tanpa tag markdown).
+2. TULISKAN KODE SAMPAI SELESAI, JANGAN TERPOTONG. Pastikan semua tag HTML tertutup sempurna.
+3. JANGAN PERNAH MENGGUNAKAN ISTILAH "Profil Pelajar Pancasila", ganti semua dengan istilah "Dimensi Profil Lulusan".
+4. Desain layaknya kertas A4 Portrait.
+5. GUNAKAN INLINE CSS dengan konsep Glassmorphism ringan, efek 3D (box-shadow berlapis, elemen timbul), dan warna yang sesuai jenjang ${data.jenjang}.
+6. Gunakan Emoji Edukatif yang relevan untuk menarik perhatian siswa.
+7. Struktur LKPD meliputi:
    - Header (Judul LKPD, Tempat isi Nama & Kelas dengan garis putus-putus)
    - Tujuan (Berdasarkan TP)
    - Petunjuk Belajar (Dengan icon emoji)
    - Materi Singkat (Visual dan ringkas)
    - 3-4 Aktivitas Interaktif / Soal (Gunakan bentuk desain kotak jawaban 3D, ruang kosong untuk menulis/menggambar).
    - Nilai dan Paraf Guru di bagian bawah.
-6. Pastikan desain HTML siap diprint dan tampak luar biasa, menggunakan struktur flexbox/grid dengan inline styling CSS.`;
+8. Pastikan desain HTML siap diprint dan tampak luar biasa, menggunakan struktur flexbox/grid dengan inline styling CSS.`;
             }
             // Penambahan fitur baru (Modul Ajar, ATP, Soal HOTS) cukup tambahkan fungsi di objek ini.
         };
