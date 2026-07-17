@@ -1,0 +1,1090 @@
+<!DOCTYPE html>
+<html lang="id" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BESTIEGURUAI - Smart Teaching Assistant</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter', 'sans-serif'] },
+                    colors: {
+                        brand: { 50: '#eff6ff', 100: '#dbeafe', 500: '#3b82f6', 600: '#2563eb', 700: '#1d4ed8' }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Library untuk konversi DOM ke Gambar -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #f0f9ff 0%, #e0e7ff 100%);
+            background-attachment: fixed;
+            color: #1e293b;
+        }
+        
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.01);
+        }
+
+        .glass-input {
+            background: rgba(255, 255, 255, 0.9);
+            border: 1px solid rgba(226, 232, 240, 0.8);
+            transition: all 0.2s ease;
+        }
+        
+        .glass-input:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+        
+        .toast-enter { transform: translateY(100%); opacity: 0; }
+        .toast-enter-active { transform: translateY(0); opacity: 1; transition: all 0.3s ease-out; }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col md:flex-row overflow-x-hidden">
+
+    <!-- Sidebar -->
+    <aside class="w-full md:w-64 glass-panel md:h-screen md:sticky top-0 p-6 flex flex-col z-20 shrink-0">
+        <div class="flex items-center gap-3 mb-8">
+            <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white font-bold text-xl shadow-lg">
+                B
+            </div>
+            <div>
+                <h1 class="font-bold text-lg leading-tight tracking-tight text-slate-800">BESTIEGURUAI</h1>
+                <p class="text-xs text-slate-500 font-medium">Smart Teaching Assistant</p>
+            </div>
+        </div>
+
+        <nav class="flex flex-col gap-2 flex-grow">
+            <a href="#section-api" class="sidebar-link px-4 py-3 rounded-xl hover:bg-white/60 transition-colors font-medium text-slate-700 flex items-center gap-3">
+                <svg class="w-5 h-5 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                Pengaturan API
+            </a>
+            <a href="#section-form" class="sidebar-link px-4 py-3 rounded-xl hover:bg-white/60 transition-colors font-medium text-slate-700 flex items-center gap-3">
+                <svg class="w-5 h-5 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
+                Desain Pembelajaran
+            </a>
+            <a href="#section-output" class="sidebar-link px-4 py-3 rounded-xl hover:bg-white/60 transition-colors font-medium text-slate-700 flex items-center gap-3">
+                <svg class="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                Hasil Generasi
+            </a>
+        </nav>
+        <div class="mt-auto pt-6 text-center text-xs text-slate-400">
+            &copy; 2026 BestieGuruAI
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="flex-1 w-full max-w-5xl mx-auto p-4 md:p-8 flex flex-col gap-8">
+        
+        <!-- Header -->
+        <header class="glass-panel p-6 rounded-2xl flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+            <div>
+                <h2 class="text-2xl font-bold text-slate-800">Ruang Kerja</h2>
+                <p class="text-slate-500 text-sm mt-1">Hasilkan perangkat ajar berkualitas dengan kecerdasan buatan.</p>
+            </div>
+            <button onclick="window.open('https://aistudio.google.com/app/apikey', '_blank')" class="bg-slate-800 hover:bg-slate-900 text-white px-6 py-2.5 rounded-xl text-sm font-medium transition-all shadow-md hover:shadow-lg flex items-center gap-2">
+                <svg class="w-4 h-4 text-yellow-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path></svg>
+                Dapatkan Gemini API Key
+            </button>
+        </header>
+
+        <!-- Section API Settings -->
+        <section id="section-api" class="glass-panel p-6 md:p-8 rounded-2xl scroll-mt-6">
+            <h3 class="text-xl font-semibold text-slate-800 mb-6 flex items-center gap-2">
+                <span class="bg-indigo-100 text-indigo-600 w-8 h-8 rounded-lg flex items-center justify-center text-sm">1</span>
+                Pengaturan API
+            </h3>
+            
+            <div class="flex flex-col md:flex-row gap-4">
+                <div class="flex-1 relative">
+                    <input type="password" id="api_key_input" placeholder="Paste Google Gemini API Key Anda disini..." class="w-full glass-input px-4 py-3 rounded-xl text-slate-700 pr-12">
+                    <button type="button" onclick="AppUI.togglePassword('api_key_input')" class="absolute right-3 top-3 text-slate-400 hover:text-slate-600">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
+                    </button>
+                </div>
+                <button id="btn_validate_api" onclick="APIController.validateKey()" class="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-3 rounded-xl font-medium transition-all shadow-md w-full md:w-auto flex justify-center items-center gap-2">
+                    Simpan & Validasi
+                </button>
+            </div>
+            
+            <div id="api_status_container" class="mt-4 hidden rounded-xl p-4 border flex items-start gap-3">
+                <div id="api_status_icon" class="mt-0.5"></div>
+                <div>
+                    <h4 id="api_status_title" class="font-semibold text-sm">Status</h4>
+                    <p id="api_status_msg" class="text-sm mt-1"></p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section Form -->
+        <section id="section-form" class="glass-panel p-6 md:p-8 rounded-2xl scroll-mt-6">
+            <h3 class="text-xl font-semibold text-slate-800 mb-6 flex items-center gap-2">
+                <span class="bg-blue-100 text-blue-600 w-8 h-8 rounded-lg flex items-center justify-center text-sm">2</span>
+                Informasi Umum
+            </h3>
+            
+            <form id="main_form" class="space-y-6">
+                <!-- Data Umum -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-2">Nama Penyusun <span class="text-red-500">*</span></label>
+                        <input type="text" id="nama_penyusun" required class="w-full glass-input px-4 py-2.5 rounded-xl" placeholder="Contoh: Budi Santoso, S.Pd">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-2">Nama Sekolah <span class="text-red-500">*</span></label>
+                        <input type="text" id="nama_sekolah" required class="w-full glass-input px-4 py-2.5 rounded-xl" placeholder="Contoh: SD Negeri 1 Nusantara">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-2">Jenjang <span class="text-red-500">*</span></label>
+                        <select id="jenjang" required onchange="FormController.handleJenjangChange()" class="w-full glass-input px-4 py-2.5 rounded-xl appearance-none">
+                            <option value="">-- Pilih Jenjang --</option>
+                            <option value="PAUD">PAUD</option>
+                            <option value="TK">TK</option>
+                            <option value="SD">SD</option>
+                            <option value="SMP">SMP</option>
+                            <option value="SMA">SMA</option>
+                            <option value="SMK">SMK</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-2">Kelas <span class="text-red-500">*</span></label>
+                        <select id="kelas" required class="w-full glass-input px-4 py-2.5 rounded-xl appearance-none">
+                            <option value="">-- Pilih Jenjang Terlebih Dahulu --</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-2">Semester <span class="text-red-500">*</span></label>
+                        <select id="semester" required class="w-full glass-input px-4 py-2.5 rounded-xl appearance-none">
+                            <option value="Ganjil">Ganjil</option>
+                            <option value="Genap">Genap</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-2">Tahun Pelajaran <span class="text-red-500">*</span></label>
+                        <input type="text" id="tahun_pelajaran" required class="w-full glass-input px-4 py-2.5 rounded-xl" placeholder="Contoh: 2026/2027">
+                    </div>
+                </div>
+
+                <hr class="border-slate-200">
+                <h3 class="text-lg font-semibold text-slate-800 mb-4">Desain Pembelajaran</h3>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-2">Mata Pelajaran <span class="text-red-500">*</span></label>
+                        <select id="dropdown_mapel" required onchange="FormController.handleMapelChange()" class="w-full glass-input px-4 py-2.5 rounded-xl appearance-none">
+                            <option value="">-- Pilih Jenjang Terlebih Dahulu --</option>
+                        </select>
+                    </div>
+                    <div id="container_mapel_manual" class="hidden">
+                        <label class="block text-sm font-medium text-slate-700 mb-2">Nama Mata Pelajaran (Manual) <span class="text-red-500">*</span></label>
+                        <input type="text" id="mapel_manual" class="w-full glass-input px-4 py-2.5 rounded-xl" placeholder="Ketik nama mata pelajaran...">
+                    </div>
+                </div>
+
+                <!-- Container Kurikulum -->
+                <div id="container_kurikulum" class="bg-white/50 p-4 rounded-xl border border-slate-200 space-y-4">
+                    <!-- Ini akan diisi oleh JavaScript secara dinamis -->
+                    <div class="text-center text-sm text-slate-500 py-4">Pilih Mata Pelajaran terlebih dahulu.</div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-2">Tanggal Pelaksanaan <span class="text-red-500">*</span></label>
+                        <input type="date" id="tanggal_pelaksanaan" required class="w-full glass-input px-4 py-2.5 rounded-xl">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-2">Alokasi Waktu <span class="text-red-500">*</span></label>
+                        <input type="text" id="alokasi_waktu" required class="w-full glass-input px-4 py-2.5 rounded-xl" placeholder="Contoh: 2 x 35 Menit">
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="flex flex-col sm:flex-row gap-4 pt-4">
+                    <button type="button" onclick="GeneratorController.startGeneration('RPM')" class="flex-1 bg-brand-600 hover:bg-brand-700 text-white px-6 py-3.5 rounded-xl font-semibold transition-all shadow-md shadow-brand-500/30 flex justify-center items-center gap-2">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                        Generator RPM
+                    </button>
+                    <button type="button" onclick="GeneratorController.startGeneration('LKPD')" class="flex-1 bg-gradient-to-r from-purple-500 to-indigo-600 hover:from-purple-600 hover:to-indigo-700 text-white px-6 py-3.5 rounded-xl font-semibold transition-all shadow-md shadow-indigo-500/30 flex justify-center items-center gap-2">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 10l-2 1m0 0l-2-1m2 1v2.5M20 7l-2 1m2-1l-2-1m2 1v2.5M14 4l-2-1-2 1M4 7l2-1M4 7l2 1M4 7v2.5M12 21l-2-1m2 1l2-1m-2 1v-2.5M6 18l-2-1v-2.5M18 18l2-1v-2.5"></path></svg>
+                        Generator LKPD 3D
+                    </button>
+                </div>
+            </form>
+        </section>
+
+        <!-- Section Output -->
+        <section id="section-output" class="glass-panel p-6 md:p-8 rounded-2xl scroll-mt-6 min-h-[400px] flex flex-col">
+            <div class="flex items-center justify-between mb-6">
+                <h3 class="text-xl font-semibold text-slate-800 flex items-center gap-2">
+                    <span class="bg-green-100 text-green-600 w-8 h-8 rounded-lg flex items-center justify-center text-sm">3</span>
+                    Hasil Generasi
+                </h3>
+                
+                <!-- Export Buttons (Hidden initally) -->
+                <div id="export_controls" class="hidden flex gap-2">
+                    <button onclick="ExportController.exportToWord()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors shadow flex items-center gap-2">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                        Word
+                    </button>
+                    <button onclick="ExportController.exportToPNG()" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors shadow flex items-center gap-2">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                        PNG
+                    </button>
+                </div>
+            </div>
+
+            <!-- Loading State -->
+            <div id="loading_state" class="hidden flex-col items-center justify-center flex-1 py-12">
+                <div class="relative w-24 h-24 mb-6">
+                    <div class="absolute inset-0 rounded-full border-4 border-slate-200"></div>
+                    <div class="absolute inset-0 rounded-full border-4 border-indigo-600 border-t-transparent animate-spin"></div>
+                </div>
+                <h4 class="text-lg font-semibold text-slate-700 mb-2">AI Sedang Bekerja...</h4>
+                <p class="text-sm text-slate-500 max-w-sm text-center">Menyusun materi pembelajaran berdasarkan kurikulum nasional terbaik. Mohon tunggu sebentar.</p>
+            </div>
+
+            <!-- Output Container -->
+            <div id="output_container" class="bg-white rounded-xl shadow-inner border border-slate-200 p-8 flex-1 overflow-auto w-full prose prose-slate max-w-none">
+                <div class="text-center text-slate-400 py-12 flex flex-col items-center">
+                    <svg class="w-16 h-16 mb-4 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 13h6m-3-3v6m-9 1V7a2 2 0 012-2h6l2 2h6a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2z"></path></svg>
+                    Hasil generasi AI akan tampil di sini.
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Toast Notification Container -->
+    <div id="toast_container" class="fixed bottom-4 right-4 z-50 flex flex-col gap-2"></div>
+
+    <script>
+        /**
+         * Arsitektur JavaScript berbasis Namespace (Modular & Independen)
+         */
+
+        // 1. App Configuration
+        const AppConfig = {
+            GEMINI_MODEL: localStorage.getItem('selectedGeminiModel') || null,
+            API_BASE_URL: 'https://generativelanguage.googleapis.com/v1beta/',
+            STORAGE_KEY: 'gemini_api_key_bestieguru',
+            MODEL_STORAGE_KEY: 'selectedGeminiModel'
+        };
+
+        // 2. Mock Database Kurikulum (Khusus Koding SD sesuai instruksi)
+        const CurriculumDB = {
+            "SD": {
+                "Koding dan Kecerdasan Artifisial": {
+                    "Berpikir Komputasional": {
+                        cp: "Memahami Permasalahan Sederhana Dalam Kehidupan Sehari-Hari, Menerapkan Pemecahan Masalah Secara Sistematis, Serta Menuliskan Instruksi Logis Dan Terstruktur Menggunakan Sekumpulan Kosakata Atau Simbol.",
+                        tp: [
+                            "Menerapkan pemecahan masalah dalam kehidupan sehari-hari.",
+                            "Memahami konsep berpikir komputasional.",
+                            "Menuliskan urutan instruksi secara logis.",
+                            "Menerapkan algoritma sederhana.",
+                            "Menerapkan representasi simbol dalam instruksi."
+                        ]
+                    },
+                    "Literasi Digital": {
+                        cp: "Memahami Konsep Dasar, Manfaat, Dan Dampak Teknologi Digital, Memahami Sistem Computer Tingkat Pradasar, Menerapkan Pengamanan Informasi Pribadi Dalam Komunikasi Daring, Memanfaatkan Internet, Dan Memproduksi Serta Mendiseminasi Konten Digital Dalam Bentuk Teks Dan Gambar.",
+                        tp: [
+                            "Memahami konsep dasar teknologi digital.",
+                            "Memahami perangkat keras dan perangkat lunak komputer.",
+                            "Memahami keamanan informasi pribadi.",
+                            "Menerapkan internet secara aman dan produktif.",
+                            "Memahami dampak teknologi digital.",
+                            "Menerapkan produksi konten digital dalam bentuk teks dan gambar.",
+                            "Menerapkan diseminasi konten digital dalam bentuk teks dan gambar."
+                        ]
+                    },
+                    "Literasi dan Etika Kecerdasan Artifisial": {
+                        cp: "Memahami Konsep KA Sederhana, Manfaat Dan Dampak KA Pada Kehidupan Sehari-Hari, Prinsip Bahwa KA Dikembangkan Untuk Meningkatkan Kesejahteraan Manusia Dan Tidak Boleh Merugikan Manusia, Mengetahui Perbedaan Manusia Dan Komputer Dalam Melakukan Penginderaan, Dan Mengetahui Perbedaan Antara Mesin Cerdas Dan Mesin Non-Cerdas. Memahami Etika Dasar Penggunaan KA Seperti Empati Dan Tidak Menyakiti Orang Lain.",
+                        tp: [
+                            "Memahami konsep dasar Kecerdasan Artifisial.",
+                            "Memahami perbedaan komputer dan manusia dalam penginderaan.",
+                            "Memahami perbedaan mesin cerdas vs. mesin non-cerdas.",
+                            "Memahami manfaat Kecerdasan Artifisial dalam kehidupan sehari-hari.",
+                            "Memahami cara kerja Kecerdasan Artifisial secara sederhana",
+                            "Memahami etika dasar penggunaan Kecerdasan Artifisial.",
+                            "Memahami dampak Kecerdasan Artifisial terhadap pekerjaan dan masa depan."
+                        ]
+                    },
+                    "Pemanfaatan dan Pengembangan Kecerdasan Artisial": {
+                        cp: "Menyimulasikan Secara Sederhana Kerja KA Saat Mengenali Pola, Mengklasifikasi Benda Konkret Berdasarkan Sifatnya, Dan Mengetahui Bagaimana Prediksi Sistem KA Dipengaruhi Input Benda Konkret.",
+                        tp: [
+                            "Menerapkan konsep klasifikasi dalam kehidupan sehari-hari.",
+                            "Memahami bagaimana Kecerdasan Artifisial melakukan klasifikasi.",
+                            "Menerapkan eksperimen klasifikasi Manual vs. klasifikasi oleh Kecerdasan Artifisial.",
+                            "Memahami pengaruh data input terhadap hasil klasifikasi Kecerdasan Artifisial.",
+                            "Memahami bagaimana Kecerdasan Artifisial belajar dari data.",
+                            "Memahami model klasifikasi sederhana.",
+                            "Memahami faktor yang memengaruhi Prediksi Kecerdasan Artifisial.",
+                            "Melakukan eksperimen dengan data."
+                        ]
+                    }
+                },
+                "Pendidikan Pancasila": "Manual",
+                "Bahasa Indonesia": "Manual",
+                "Matematika": "Manual",
+                "IPAS": "Manual",
+                "Bahasa Inggris": "Manual",
+                "Pendidikan Agama dan Budi Pekerti": "Manual",
+                "PJOK": "Manual",
+                "Seni Budaya": "Manual"
+            }
+        };
+
+        const ClassMapping = {
+            "PAUD": ["Kelompok A", "Kelompok B"],
+            "TK": ["TK A", "TK B"],
+            "SD": ["Kelas 1", "Kelas 2", "Kelas 3", "Kelas 4", "Kelas 5", "Kelas 6"],
+            "SMP": ["Kelas 7", "Kelas 8", "Kelas 9"],
+            "SMA": ["Kelas 10", "Kelas 11", "Kelas 12"],
+            "SMK": ["Kelas 10", "Kelas 11", "Kelas 12"]
+        };
+
+        // 3. UI Controller (Menangani murni visual dan DOM)
+        const AppUI = {
+            togglePassword(id) {
+                const el = document.getElementById(id);
+                el.type = el.type === 'password' ? 'text' : 'password';
+            },
+
+            showToast(message, type = 'success') {
+                const container = document.getElementById('toast_container');
+                const toast = document.createElement('div');
+                
+                const colors = {
+                    success: 'bg-green-500',
+                    error: 'bg-red-500',
+                    warning: 'bg-yellow-500'
+                };
+
+                toast.className = `${colors[type]} text-white px-6 py-3 rounded-xl shadow-lg flex items-center gap-3 toast-enter transition-all duration-300`;
+                toast.innerHTML = `
+                    <span class="font-medium">${message}</span>
+                `;
+                
+                container.appendChild(toast);
+                
+                // Trigger animation
+                setTimeout(() => toast.classList.add('toast-enter-active'), 10);
+                
+                // Remove
+                setTimeout(() => {
+                    toast.classList.remove('toast-enter-active');
+                    setTimeout(() => toast.remove(), 300);
+                }, 3000);
+            },
+
+            scrollTo(id) {
+                const el = document.getElementById(id);
+                if(el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            },
+
+            setLoadingState(isLoading) {
+                const formFields = document.getElementById('main_form').querySelectorAll('input, select, button');
+                const loading = document.getElementById('loading_state');
+                const output = document.getElementById('output_container');
+                const exportControls = document.getElementById('export_controls');
+
+                formFields.forEach(el => el.disabled = isLoading);
+                
+                if(isLoading) {
+                    loading.classList.replace('hidden', 'flex');
+                    output.classList.add('hidden');
+                    exportControls.classList.add('hidden');
+                    this.scrollTo('section-output');
+                } else {
+                    loading.classList.replace('flex', 'hidden');
+                    output.classList.remove('hidden');
+                }
+            },
+
+            renderOutput(htmlContent) {
+                const output = document.getElementById('output_container');
+                const exportControls = document.getElementById('export_controls');
+                
+                // Clean markdown artifacts if AI wrapped html in ```html
+                let cleanedHtml = htmlContent.replace(/```html\s*/gi, '').replace(/```\s*$/g, '');
+                
+                output.innerHTML = cleanedHtml;
+                exportControls.classList.remove('hidden');
+                this.scrollTo('section-output');
+            }
+        };
+
+        // 4. Form Controller (Validasi & Logika Kaskade Dropdown)
+        const FormController = {
+            currentCurriculumData: null, // Menyimpan data kurikulum yang aktif
+
+            handleJenjangChange() {
+                const jenjang = document.getElementById('jenjang').value;
+                const classSelect = document.getElementById('kelas');
+                const mapelSelect = document.getElementById('dropdown_mapel');
+                
+                // 4.1 Update Kelas
+                classSelect.innerHTML = '<option value="">-- Pilih Kelas --</option>';
+                if(ClassMapping[jenjang]) {
+                    ClassMapping[jenjang].forEach(kls => {
+                        classSelect.insertAdjacentHTML('beforeend', `<option value="${kls}">${kls}</option>`);
+                    });
+                }
+
+                // 4.2 Update Mapel
+                mapelSelect.innerHTML = '<option value="">-- Pilih Mata Pelajaran --</option>';
+                if (jenjang === 'SD') {
+                    Object.keys(CurriculumDB.SD).forEach(mapel => {
+                        mapelSelect.insertAdjacentHTML('beforeend', `<option value="${mapel}">${mapel}</option>`);
+                    });
+                    mapelSelect.insertAdjacentHTML('beforeend', `<option value="Manual">Lainnya (Input Manual)</option>`);
+                } else if(jenjang !== '') {
+                    mapelSelect.insertAdjacentHTML('beforeend', `<option value="Manual">Input Manual</option>`);
+                    mapelSelect.value = "Manual"; // Auto select
+                }
+
+                this.handleMapelChange(); // Trigger update UI kurikulum
+            },
+
+            handleMapelChange() {
+                const jenjang = document.getElementById('jenjang').value;
+                const mapel = document.getElementById('dropdown_mapel').value;
+                const manualContainer = document.getElementById('container_mapel_manual');
+                const kurikulumContainer = document.getElementById('container_kurikulum');
+
+                // Toggle manual mapel input
+                if (mapel === 'Manual' || jenjang !== 'SD') {
+                    manualContainer.classList.remove('hidden');
+                    document.getElementById('mapel_manual').required = true;
+                } else {
+                    manualContainer.classList.add('hidden');
+                    document.getElementById('mapel_manual').required = false;
+                }
+
+                // Render Elemen, CP, TP
+                if (jenjang === 'SD' && mapel === 'Koding dan Kecerdasan Artifisial') {
+                    this.renderInteractiveCurriculum(CurriculumDB.SD[mapel]);
+                } else if (mapel !== '') {
+                    this.renderCurriculumManual();
+                } else {
+                    kurikulumContainer.innerHTML = '<div class="text-center text-sm text-slate-500 py-4">Pilih Mata Pelajaran terlebih dahulu.</div>';
+                }
+            },
+
+            renderInteractiveCurriculum(data) {
+                this.currentCurriculumData = data;
+                const container = document.getElementById('container_kurikulum');
+                
+                let elemenHtml = '';
+                Object.keys(data).forEach(elemenName => {
+                    elemenHtml += `
+                        <label class="flex items-start gap-3 p-3 bg-white rounded-lg border border-slate-200 shadow-sm cursor-pointer hover:bg-slate-50 transition-colors">
+                            <input type="checkbox" name="elemen_auto" value="${elemenName}" onchange="FormController.updateInteractiveCPandTP()" class="mt-1 w-4 h-4 text-brand-600 rounded border-slate-300 focus:ring-brand-500">
+                            <span class="text-sm font-medium text-slate-700">${elemenName}</span>
+                        </label>
+                    `;
+                });
+
+                container.innerHTML = `
+                    <div class="mb-4">
+                        <label class="block text-xs font-semibold text-brand-600 uppercase tracking-wider mb-2">Pilih Elemen (Bisa lebih dari satu)</label>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-3" id="elemen_container">
+                            ${elemenHtml}
+                        </div>
+                    </div>
+                    <div class="mb-4 hidden" id="cp_section">
+                        <label class="block text-xs font-semibold text-brand-600 uppercase tracking-wider mb-2">Capaian Pembelajaran (CP)</label>
+                        <div class="space-y-3" id="cp_container"></div>
+                    </div>
+                    <div class="hidden" id="tp_section">
+                        <label class="block text-xs font-semibold text-brand-600 uppercase tracking-wider mb-2">Tujuan Pembelajaran (TP)</label>
+                        <div class="space-y-3" id="tp_container"></div>
+                    </div>
+                `;
+            },
+
+            updateInteractiveCPandTP() {
+                const selectedElements = Array.from(document.querySelectorAll('input[name="elemen_auto"]:checked')).map(cb => cb.value);
+                const cpSection = document.getElementById('cp_section');
+                const tpSection = document.getElementById('tp_section');
+                const cpContainer = document.getElementById('cp_container');
+                const tpContainer = document.getElementById('tp_container');
+
+                if (selectedElements.length === 0) {
+                    cpSection.classList.add('hidden');
+                    tpSection.classList.add('hidden');
+                    cpContainer.innerHTML = '';
+                    tpContainer.innerHTML = '';
+                    return;
+                }
+
+                cpSection.classList.remove('hidden');
+                tpSection.classList.remove('hidden');
+
+                let cpHtml = '';
+                let tpHtml = '';
+
+                selectedElements.forEach(elName => {
+                    const elData = this.currentCurriculumData[elName];
+                    
+                    // Render CP dinamis
+                    cpHtml += `
+                        <div class="p-4 bg-indigo-50/50 rounded-xl border border-indigo-100 shadow-sm">
+                            <div class="text-xs font-bold text-indigo-700 mb-2 uppercase tracking-wide">${elName}</div>
+                            <label class="flex items-start gap-3 cursor-pointer">
+                                <input type="checkbox" name="cp_auto" value="${elData.cp}" class="mt-1 w-4 h-4 text-indigo-600 rounded border-indigo-300 focus:ring-indigo-500" checked>
+                                <span class="text-sm text-slate-700 leading-relaxed">${elData.cp}</span>
+                            </label>
+                        </div>
+                    `;
+
+                    // Render TP dinamis
+                    tpHtml += `
+                        <div class="p-4 bg-blue-50/50 rounded-xl border border-blue-100 shadow-sm">
+                            <div class="text-xs font-bold text-blue-700 mb-3 uppercase tracking-wide">${elName}</div>
+                            <div class="space-y-2">
+                    `;
+                    elData.tp.forEach(tpItem => {
+                        tpHtml += `
+                            <label class="flex items-start gap-3 cursor-pointer hover:bg-white p-2 rounded-lg transition-colors border border-transparent hover:border-blue-100">
+                                <input type="checkbox" name="tp_auto" value="${tpItem}" class="mt-1 w-4 h-4 text-blue-600 rounded border-blue-300 focus:ring-blue-500" checked>
+                                <span class="text-sm text-slate-700">${tpItem}</span>
+                            </label>
+                        `;
+                    });
+                    tpHtml += `</div></div>`;
+                });
+
+                cpContainer.innerHTML = cpHtml;
+                tpContainer.innerHTML = tpHtml;
+            },
+
+            renderCurriculumManual() {
+                const container = document.getElementById('container_kurikulum');
+                container.innerHTML = `
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 mb-2">Elemen <span class="text-red-500">*</span></label>
+                            <input type="text" id="elemen_manual" required class="w-full glass-input px-4 py-2.5 rounded-xl" placeholder="Ketik elemen pembelajaran...">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 mb-2">Capaian Pembelajaran (CP) <span class="text-red-500">*</span></label>
+                            <textarea id="cp_manual" required rows="3" class="w-full glass-input px-4 py-2.5 rounded-xl" placeholder="Ketik Capaian Pembelajaran..."></textarea>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 mb-2">Tujuan Pembelajaran (TP) <span class="text-red-500">*</span></label>
+                            <textarea id="tp_manual" required rows="3" class="w-full glass-input px-4 py-2.5 rounded-xl" placeholder="Ketik Tujuan Pembelajaran... (Pisahkan dengan koma atau baris baru)"></textarea>
+                        </div>
+                    </div>
+                `;
+            },
+
+            validateForm() {
+                const form = document.getElementById('main_form');
+                if (!form.checkValidity()) {
+                    form.reportValidity();
+                    AppUI.showToast('Mohon lengkapi semua form yang wajib diisi (*)', 'warning'); // Memberitahu user alasan tombol seolah tidak jalan
+                    return false;
+                }
+                
+                const jenjang = document.getElementById('jenjang').value;
+                const mapel = document.getElementById('dropdown_mapel').value;
+                
+                // Custom validation untuk mode auto-koding
+                if (jenjang === 'SD' && mapel === 'Koding dan Kecerdasan Artifisial') {
+                    const elemenCheckboxes = document.querySelectorAll('input[name="elemen_auto"]');
+                    if (elemenCheckboxes.length > 0) {
+                        const isElemenChecked = Array.from(elemenCheckboxes).some(cb => cb.checked);
+                        if (!isElemenChecked) {
+                            AppUI.showToast('Pilih minimal satu Elemen', 'error');
+                            return false;
+                        }
+                        
+                        const isCpChecked = Array.from(document.querySelectorAll('input[name="cp_auto"]')).some(cb => cb.checked);
+                        if (!isCpChecked) {
+                            AppUI.showToast('Pilih minimal satu Capaian Pembelajaran (CP)', 'error');
+                            return false;
+                        }
+
+                        const isTpChecked = Array.from(document.querySelectorAll('input[name="tp_auto"]')).some(cb => cb.checked);
+                        if (!isTpChecked) {
+                            AppUI.showToast('Pilih minimal satu Tujuan Pembelajaran (TP)', 'error');
+                            return false;
+                        }
+                    }
+                }
+                return true;
+            },
+
+            collectData() {
+                const data = {
+                    penyusun: document.getElementById('nama_penyusun').value,
+                    sekolah: document.getElementById('nama_sekolah').value,
+                    jenjang: document.getElementById('jenjang').value,
+                    kelas: document.getElementById('kelas').value,
+                    semester: document.getElementById('semester').value,
+                    tahun: document.getElementById('tahun_pelajaran').value,
+                    tanggal: document.getElementById('tanggal_pelaksanaan').value,
+                    waktu: document.getElementById('alokasi_waktu').value,
+                    mapel: document.getElementById('dropdown_mapel').value,
+                };
+
+                if (data.mapel === 'Manual' || data.jenjang !== 'SD') {
+                    data.mapelName = document.getElementById('mapel_manual').value;
+                    data.elemen = document.getElementById('elemen_manual').value;
+                    data.cp = document.getElementById('cp_manual').value;
+                    data.tp = document.getElementById('tp_manual').value;
+                } else {
+                    data.mapelName = data.mapel;
+                    // Kumpulkan semua value dari checkbox yang tercentang dan gabungkan dengan semicolon
+                    const checkedElements = Array.from(document.querySelectorAll('input[name="elemen_auto"]:checked')).map(cb => cb.value);
+                    const checkedCPs = Array.from(document.querySelectorAll('input[name="cp_auto"]:checked')).map(cb => cb.value);
+                    const checkedTPs = Array.from(document.querySelectorAll('input[name="tp_auto"]:checked')).map(cb => cb.value);
+                    
+                    data.elemen = checkedElements.join('; ');
+                    data.cp = checkedCPs.join('; ');
+                    data.tp = checkedTPs.join('; ');
+                }
+
+                return data;
+            }
+        };
+
+        // 5. API Controller (Koneksi ke Gemini dengan Error Handling sesuai aturan)
+        const APIController = {
+            getKey() {
+                return localStorage.getItem(AppConfig.STORAGE_KEY) || document.getElementById('api_key_input').value.trim();
+            },
+
+            setKey(key) {
+                localStorage.setItem(AppConfig.STORAGE_KEY, key);
+                document.getElementById('api_key_input').value = key;
+            },
+
+            updateStatusUI(isSuccess, message) {
+                const container = document.getElementById('api_status_container');
+                const icon = document.getElementById('api_status_icon');
+                const title = document.getElementById('api_status_title');
+                const msg = document.getElementById('api_status_msg');
+
+                container.classList.remove('hidden', 'bg-green-50', 'border-green-200', 'bg-red-50', 'border-red-200');
+                
+                if (isSuccess) {
+                    container.classList.add('bg-green-50', 'border-green-200');
+                    title.className = 'font-semibold text-sm text-green-800';
+                    msg.className = 'text-sm mt-1 text-green-600';
+                    icon.innerHTML = `<svg class="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>`;
+                } else {
+                    container.classList.add('bg-red-50', 'border-red-200');
+                    title.className = 'font-semibold text-sm text-red-800';
+                    msg.className = 'text-sm mt-1 text-red-600';
+                    icon.innerHTML = `<svg class="w-5 h-5 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>`;
+                }
+                
+                title.innerText = isSuccess ? 'API Key Valid' : 'Koneksi Gagal';
+                msg.innerText = message;
+            },
+
+            async findAndSetWorkingModel(key) {
+                const endpoint = `${AppConfig.API_BASE_URL}models?key=${key}`;
+                
+                const response = await fetch(endpoint);
+                if (!response.ok) {
+                    await this.handleAPIError(response);
+                }
+                
+                const data = await response.json();
+                
+                if (!data.models || data.models.length === 0) {
+                    throw new Error("Gagal mengambil daftar model dari Google.");
+                }
+
+                // Filter model yang mendukung generateContent dan bukan tipe vision
+                const validModels = data.models.filter(m => 
+                    m.supportedGenerationMethods && 
+                    m.supportedGenerationMethods.includes('generateContent') &&
+                    m.name.includes('gemini') &&
+                    !m.name.includes('vision')
+                );
+
+                if (validModels.length === 0) {
+                    throw new Error("Tidak ditemukan model Gemini yang mendukung text generation.");
+                }
+
+                // Prioritaskan model flash (biasanya lebih cepat/murah), lalu pro
+                validModels.sort((a, b) => {
+                    const aFlash = a.name.includes('flash');
+                    const bFlash = b.name.includes('flash');
+                    if (aFlash && !bFlash) return -1;
+                    if (!aFlash && bFlash) return 1;
+                    return 0;
+                });
+
+                console.log(`[API Log] Ditemukan ${validModels.length} kandidat model. Memulai pengujian satu per satu...`);
+
+                let workingModel = null;
+                let lastErrorMsg = "";
+
+                // LOOP PENGUJIAN: Test setiap model sampai menemukan satu yang membalas HTTP 200 (Bukan 404 Deprecated)
+                for (const modelObj of validModels) {
+                    const modelName = modelObj.name.replace('models/', '');
+                    console.log(`[API Log] Menguji model: ${modelName}...`);
+                    
+                    try {
+                        const testResponse = await fetch(`${AppConfig.API_BASE_URL}models/${modelName}:generateContent?key=${key}`, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ contents: [{ parts: [{ text: "Hello" }] }] })
+                        });
+
+                        if (testResponse.ok) {
+                            workingModel = modelName;
+                            console.log(`[API Log] ✓ Model ${modelName} AKTIF dan BERHASIL divalidasi!`);
+                            break; // Berhenti menguji karena sudah menemukan model yang aktif
+                        } else {
+                            const errData = await testResponse.json().catch(() => ({}));
+                            lastErrorMsg = errData.error?.message || `HTTP ${testResponse.status}`;
+                            console.warn(`[API Log] ✗ Model ${modelName} gagal/tidak tersedia: ${lastErrorMsg}`);
+                        }
+                    } catch (e) {
+                         console.warn(`[API Log] ✗ Model ${modelName} gagal koneksi: ${e.message}`);
+                         lastErrorMsg = e.message;
+                    }
+                }
+
+                if (!workingModel) {
+                    throw new Error(`Gagal menemukan model yang aktif. Google mungkin memblokir akses ke model-model tersebut untuk akun Anda. Error terakhir: ${lastErrorMsg}`);
+                }
+
+                // Simpan model yang terbukti berfungsi
+                AppConfig.GEMINI_MODEL = workingModel;
+                localStorage.setItem(AppConfig.MODEL_STORAGE_KEY, workingModel);
+                
+                return workingModel;
+            },
+
+            async validateKey() {
+                const key = document.getElementById('api_key_input').value.trim();
+                if (!key) {
+                    this.updateStatusUI(false, "API Key tidak boleh kosong.");
+                    return false;
+                }
+
+                try {
+                    const btn = document.getElementById('btn_validate_api');
+                    btn.disabled = true;
+                    btn.innerHTML = `<svg class="animate-spin w-5 h-5" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> Validasi...`;
+
+                    // Panggil fungsi yang secara aktif mencari dan menguji ketersediaan model
+                    const activeModel = await this.findAndSetWorkingModel(key);
+                    
+                    this.setKey(key);
+                    this.updateStatusUI(true, `✓ API Key valid. Menggunakan model aktif: ${activeModel}`);
+                    AppUI.showToast('API Key Valid!', 'success');
+                    return true;
+
+                } catch (error) {
+                    this.updateStatusUI(false, error.message);
+                    AppUI.showToast('Validasi Gagal', 'error');
+                    return false;
+                } finally {
+                    const btn = document.getElementById('btn_validate_api');
+                    btn.disabled = false;
+                    btn.innerText = "Simpan & Validasi";
+                }
+            },
+
+            async handleAPIError(response) {
+                console.log(`[API Log] Status HTTP: ${response.status} | Model: ${AppConfig.GEMINI_MODEL || 'Belum Terpilih'} | Endpoint: ${response.url}`);
+                
+                if (response.ok) return true;
+
+                let errorMsg = "Terjadi kesalahan tidak dikenal.";
+                try {
+                    const errData = await response.json();
+                    errorMsg = errData.error?.message || errorMsg;
+                    console.log(`[API Log] Response Google:`, errData);
+                } catch (e) {
+                    console.log(`[API Log] Response Google: Error parsing JSON.`);
+                }
+
+                switch (response.status) {
+                    case 400: throw new Error(`[400 Bad Request] Request tidak valid. Detail: ${errorMsg}`);
+                    case 401: throw new Error(`[401 Unauthorized] API Key tidak valid. Detail: ${errorMsg}`);
+                    case 403: throw new Error(`[403 Forbidden] Akses ditolak. Detail: ${errorMsg}`);
+                    case 404: throw new Error(`[404 Not Found] Endpoint/Model tidak ditemukan. Detail: ${errorMsg}`);
+                    case 429: throw new Error(`[429 Too Many Requests] Limit API tercapai. Tunggu beberapa saat. Detail: ${errorMsg}`);
+                    case 500: throw new Error(`[500 Internal Server Error] Masalah pada server Google. Detail: ${errorMsg}`);
+                    default: throw new Error(`[HTTP ${response.status}] Terjadi kesalahan: ${errorMsg}`);
+                }
+            },
+
+            async executeAI(prompt) {
+                const key = this.getKey();
+                if (!key) throw new Error("API Key belum disetting. Silakan isi di Pengaturan API.");
+
+                if (!AppConfig.GEMINI_MODEL) {
+                    await this.findAndSetWorkingModel(key);
+                }
+
+                const payload = {
+                    contents: [{ parts: [{ text: prompt }] }],
+                    generationConfig: {
+                        temperature: 0.7,
+                        maxOutputTokens: 8192,
+                    }
+                };
+
+                let response = await fetch(`${AppConfig.API_BASE_URL}models/${AppConfig.GEMINI_MODEL}:generateContent?key=${key}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                // AUTO-FALLBACK: Jika model yang tersimpan di localStorage tiba-tiba deprecated (mengembalikan 404)
+                if (response.status === 404) {
+                    console.warn(`[API Log] Model ${AppConfig.GEMINI_MODEL} tiba-tiba tidak tersedia (404). Memulai pencarian model baru...`);
+                    
+                    // Reset model lama
+                    AppConfig.GEMINI_MODEL = null;
+                    localStorage.removeItem(AppConfig.MODEL_STORAGE_KEY);
+                    
+                    // Cari model baru yang berfungsi
+                    await this.findAndSetWorkingModel(key);
+                    
+                    // Ulangi request dengan model baru
+                    response = await fetch(`${AppConfig.API_BASE_URL}models/${AppConfig.GEMINI_MODEL}:generateContent?key=${key}`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+                }
+
+                await this.handleAPIError(response);
+                
+                const data = await response.json();
+                if (data.candidates && data.candidates[0].content.parts[0].text) {
+                    return data.candidates[0].content.parts[0].text;
+                } else {
+                    throw new Error("Respon dari AI kosong atau format tidak sesuai.");
+                }
+            }
+        };
+
+        // 6. Generator Factory (Memungkinkan penambahan fitur baru tanpa menyentuh core script)
+        const Generators = {
+            RPM: (data) => {
+                return `Bertindaklah sebagai Guru Ahli dan Pengembang Kurikulum Pendidikan Nasional Indonesia.
+Buatkan Rencana Pelaksanaan Pembelajaran (RPM) / Modul Ajar Singkat yang sangat rapi dan profesional.
+
+Data Pembelajaran:
+- Penyusun: ${data.penyusun}
+- Sekolah: ${data.sekolah}
+- Jenjang: ${data.jenjang}
+- Kelas: ${data.kelas}
+- Semester: ${data.semester}
+- Tahun Pelajaran: ${data.tahun}
+- Mata Pelajaran: ${data.mapelName}
+- Tanggal Pelaksanaan: ${data.tanggal}
+- Alokasi Waktu: ${data.waktu}
+- Elemen: ${data.elemen}
+- Capaian Pembelajaran (CP): ${data.cp}
+- Tujuan Pembelajaran (TP): ${data.tp}
+
+INSTRUKSI OUTPUT:
+1. HASILKAN HANYA KODE HTML. Jangan ada teks markdown di luar tag HTML.
+2. Gunakan tag <table> untuk menyusun RPM agar sangat rapi ketika di-export ke Word.
+3. Struktur RPM meliputi:
+   - Identitas Modul
+   - Kompetensi Awal
+   - Profil Pelajar Pancasila yang relevan
+   - Sarana dan Prasarana
+   - Target Peserta Didik
+   - Kegiatan Pembelajaran (Pendahuluan, Inti, Penutup) dengan tabel terstruktur beserta estimasi waktu
+   - Asesmen (Sikap, Pengetahuan, Keterampilan)
+4. Gunakan styling inline CSS yang profesional, font sans-serif, border tabel 1px solid #000, padding, dan warna header tabel abu-abu muda.
+5. Buat sangat detail dan relevan dengan Tujuan Pembelajaran (TP) yang diberikan.`;
+            },
+            
+            LKPD: (data) => {
+                return `Bertindaklah sebagai Ahli Desain Instruksional dan Guru Kreatif.
+Buatkan Lembar Kerja Peserta Didik (LKPD) yang menarik, interaktif, dan berbasis aktivitas (HOTS).
+
+Data Pembelajaran:
+- Sekolah: ${data.sekolah}
+- Jenjang: ${data.jenjang}
+- Kelas: ${data.kelas}
+- Mata Pelajaran: ${data.mapelName}
+- Tujuan Pembelajaran (TP): ${data.tp}
+
+INSTRUKSI OUTPUT:
+1. HASILKAN HANYA KODE HTML. Jangan gunakan markdown.
+2. Desain layaknya kertas A4 Portrait.
+3. GUNAKAN INLINE CSS dengan konsep Glassmorphism ringan, efek 3D (box-shadow berlapis, elemen timbul), dan warna yang sesuai jenjang ${data.jenjang}.
+4. Gunakan Emoji Edukatif yang relevan untuk menarik perhatian siswa.
+5. Struktur LKPD meliputi:
+   - Header (Judul LKPD, Tempat isi Nama & Kelas dengan garis putus-putus)
+   - Tujuan (Berdasarkan TP)
+   - Petunjuk Belajar (Dengan icon emoji)
+   - Materi Singkat (Visual dan ringkas)
+   - 3-4 Aktivitas Interaktif / Soal (Gunakan bentuk desain kotak jawaban 3D, ruang kosong untuk menulis/menggambar).
+   - Nilai dan Paraf Guru di bagian bawah.
+6. Pastikan desain HTML siap diprint dan tampak luar biasa, menggunakan struktur flexbox/grid dengan inline styling CSS.`;
+            }
+            // Penambahan fitur baru (Modul Ajar, ATP, Soal HOTS) cukup tambahkan fungsi di objek ini.
+        };
+
+        const GeneratorController = {
+            async startGeneration(type) {
+                if (!FormController.validateForm()) return;
+                
+                const data = FormController.collectData();
+                const prompt = Generators[type](data);
+                
+                AppUI.setLoadingState(true);
+                
+                try {
+                    const resultHtml = await APIController.executeAI(prompt);
+                    AppUI.renderOutput(resultHtml);
+                    AppUI.showToast(`${type} berhasil digenerate!`, 'success');
+                } catch (error) {
+                    AppUI.showToast(error.message, 'error');
+                    console.error("[Generator Error]", error); // Membantu debugging jika terjadi error di console
+                } finally {
+                    AppUI.setLoadingState(false);
+                }
+            }
+        };
+
+        // 7. Export Controller (Word dan PNG)
+        const ExportController = {
+            exportToWord() {
+                const output = document.getElementById('output_container').innerHTML;
+                if (!output || output.trim() === '') {
+                    AppUI.showToast("Tidak ada konten untuk diekspor", "warning");
+                    return;
+                }
+
+                const header = `<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
+                <head>
+                    <meta charset='utf-8'>
+                    <title>Export Doc</title>
+                    <style>
+                        body { font-family: 'Arial', sans-serif; }
+                        table { border-collapse: collapse; width: 100%; }
+                        th, td { border: 1px solid black; padding: 8px; text-align: left; }
+                        th { background-color: #f2f2f2; }
+                    </style>
+                </head><body>`;
+                const footer = "</body></html>";
+                const sourceHTML = header + output + footer;
+                
+                const source = 'data:application/vnd.ms-word;charset=utf-8,' + encodeURIComponent(sourceHTML);
+                const fileDownload = document.createElement("a");
+                document.body.appendChild(fileDownload);
+                fileDownload.href = source;
+                fileDownload.download = `Dokumen_BestieGuruAI_${new Date().getTime()}.doc`;
+                fileDownload.click();
+                document.body.removeChild(fileDownload);
+                
+                AppUI.showToast("Berhasil mengunduh dokumen Word", "success");
+            },
+
+            async exportToPNG() {
+                const element = document.getElementById('output_container');
+                if (!element || element.innerHTML.trim() === '') {
+                    AppUI.showToast("Tidak ada konten untuk diekspor", "warning");
+                    return;
+                }
+                
+                const btn = document.querySelector('button[onclick="ExportController.exportToPNG()"]');
+                const oriText = btn.innerHTML;
+                btn.innerHTML = "Memproses...";
+                btn.disabled = true;
+
+                try {
+                    // Simpan style original overflow agar canvas tidak terpotong
+                    const oriOverflow = element.style.overflow;
+                    element.style.overflow = 'visible';
+
+                    const canvas = await html2canvas(element, {
+                        scale: 2, // High resolution
+                        useCORS: true,
+                        backgroundColor: '#ffffff'
+                    });
+                    
+                    element.style.overflow = oriOverflow; // Kembalikan style
+                    
+                    const imgData = canvas.toDataURL('image/png');
+                    const link = document.createElement('a');
+                    link.download = `Gambar_BestieGuruAI_${new Date().getTime()}.png`;
+                    link.href = imgData;
+                    link.click();
+                    
+                    AppUI.showToast("Berhasil menyimpan gambar PNG", "success");
+                } catch (err) {
+                    console.error("Canvas Export Error:", err);
+                    AppUI.showToast("Gagal menyimpan gambar. Pastikan konten tidak mengandung URL gambar yang dilindungi CORS.", "error");
+                } finally {
+                    btn.innerHTML = oriText;
+                    btn.disabled = false;
+                }
+            }
+        };
+
+        // 8. Initialization
+        window.onload = () => {
+            // Load API Key if exists
+            const savedKey = APIController.getKey();
+            if (savedKey) {
+                document.getElementById('api_key_input').value = savedKey;
+            }
+
+            // Smooth scroll untuk link sidebar
+            document.querySelectorAll('.sidebar-link').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    const href = this.getAttribute('href');
+                    if(href.startsWith('#')) {
+                        e.preventDefault();
+                        AppUI.scrollTo(href.substring(1));
+                        
+                        // Active state styling
+                        document.querySelectorAll('.sidebar-link').forEach(l => l.classList.remove('bg-brand-50', 'text-brand-700', 'font-bold'));
+                        this.classList.add('bg-brand-50', 'text-brand-700', 'font-bold');
+                    }
+                });
+            });
+            
+            // Set link pertama sebagai aktif secara default
+            const firstLink = document.querySelector('.sidebar-link');
+            if(firstLink) firstLink.classList.add('bg-brand-50', 'text-brand-700', 'font-bold');
+        };
+
+    </script>
+</body>
+</html>
